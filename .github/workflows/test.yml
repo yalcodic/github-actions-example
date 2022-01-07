@@ -26,5 +26,27 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm test
+
+    - name: Execute text
+      run: npm test
+
+    - name: if fail
+      uses: actions/github-script@0.2.0  // github-script 액션을 사용한다.
+      with:
+        github-token: ${{github.token}}  
+        script: |
+          const ref = "${{github.ref}}"
+          const pull_number = Number(ref.split("/")[2])
+          await github.pulls.createReview({
+            ...context.repo,
+            pull_number,
+            body:"테스트가 실패했습니다.",
+            event: "REQUEST_CHANGES"
+          })
+          await github.pulls.update({
+            ...context.repo,
+            pull_number,
+            state: "closed"
+          })
+      if: failure()                 
     
