@@ -31,9 +31,8 @@ jobs:
       run: npm test
 
     - name: if fail
-      uses: actions/github-script@0.2.0  // github-script 액션을 사용한다.
+      uses: actions/github-script@v5.0.0
       with:
-        github-token: ${{github.token}}  
         script: |
           const ref = "${{github.ref}}"
           const pull_number = Number(ref.split("/")[2])
